@@ -7,6 +7,7 @@ import cors from 'cors';
 import passport from 'passport';
 import httpStatus from 'http-status';
 import cookieParser from 'cookie-parser';
+import path from 'path';
 import config from './config/config';
 import { morgan } from './modules/logger';
 import { jwtStrategy } from './modules/auth';
@@ -15,11 +16,16 @@ import { ApiError, errorConverter, errorHandler } from './modules/errors';
 import routes from './routes/v1';
 
 const app: Express = express();
+// Define the path to the upload directory
+const uploadDirectory = path.resolve(config.storage.LOCAL_UPLOAD_PATH);
 
 if (config.env !== 'test') {
   app.use(morgan.successHandler);
   app.use(morgan.errorHandler);
 }
+
+// Serve static files from the uploads directory
+app.use(`/${config.storage.LOCAL_UPLOAD_PATH}`, express.static(uploadDirectory));
 
 // parse cookies
 app.use(cookieParser(config.jwt.cookieOptions.name));

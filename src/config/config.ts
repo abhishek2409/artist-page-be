@@ -21,6 +21,10 @@ const envVarsSchema = Joi.object()
     AWS_REGION: Joi.string().required().description('AWS region'),
     AWS_BUCKET_NAME: Joi.string().required().description('AWS bucket name'),
     COOKIE_SECRET: Joi.string().required().description('Cookie secret'),
+    LOCAL_UPLOAD_PATH: Joi.string().required().description('Local upload path'),
+    CLOUDINARY_CLOUD_NAME: Joi.string().required().description('Cloudinary cloud name'),
+    CLOUDINARY_API_KEY: Joi.string().required().description('Cloudinary api key'),
+    CLOUDINARY_API_SECRET: Joi.string().required().description('Cloudinary api secret'),
   })
   .unknown();
 
@@ -55,6 +59,16 @@ const config = {
     },
   },
   clientUrl: envVars.CLIENT_URL,
+  storage: {
+    AWS_ACCESS_KEY_ID: envVars.AWS_ACCESS_KEY_ID,
+    AWS_SECRET_ACCESS_KEY: envVars.AWS_SECRET_ACCESS_KEY,
+    AWS_REGION: envVars.AWS_REGION,
+    AWS_BUCKET_NAME: envVars.AWS_BUCKET_NAME,
+    LOCAL_UPLOAD_PATH: envVars.LOCAL_UPLOAD_PATH,
+    CLOUDINARY_CLOUD_NAME: envVars.CLOUDINARY_CLOUD_NAME,
+    CLOUDINARY_API_KEY: envVars.CLOUDINARY_API_KEY,
+    CLOUDINARY_API_SECRET: envVars.CLOUDINARY_API_SECRET,
+  },
 };
 
 export default config;
