@@ -5,7 +5,9 @@ import path from 'path';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import { Request, Response } from 'express';
+import httpStatus from 'http-status';
 import config from '../../config/config';
+import { ApiError } from '../errors';
 
 // Define the path to the upload directory
 const uploadDirectory = path.resolve(config.storage.LOCAL_UPLOAD_PATH);
@@ -33,47 +35,30 @@ const storage = multer.diskStorage({
 // Middleware function to handle media upload
 const upload = multer({
   storage,
-  limits: { fileSize: 2 * 1024 * 1024 }, // File size limit of 2 MB
+  fileFilter: (_req, file, cb) => {
+    if (file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/')) {
+      cb(null, true);
+    } else {
+      cb(new ApiError(httpStatus.BAD_REQUEST, 'Invalid file type. Only images and videos are allowed.'));
+    }
+  },
+  limits: { fileSize: 5 * 1024 * 1024 }, // File size limit of 2 MB
 }).single('media');
-
-export const uploadMediaOld = (req: Request, res: Response): Promise<{ fileURL: string; fileType: string }> => {
-  return new Promise((resolve, reject) => {
-    upload(req, res, (err) => {
-      if (err) {
-        return reject(err.message);
-      }
-
-      // Extract file path
-      const filePath = req.file ? path.join(uploadDirectory, req.file.filename) : '';
-
-      // Determine file type based on MIME type
-      const mimeType = req.file?.mimetype || '';
-      const fileType = mimeType.startsWith('image/') ? 'image' : mimeType.startsWith('video/') ? 'video' : '';
-
-      if (!fileType) {
-        return reject(new Error('Invalid file type. Only images and videos are allowed.'));
-      }
-
-      resolve({ fileURL: filePath, fileType });
-    });
-  });
-};
 
 export const uploadMedia = (req: Request, res: Response): Promise<{ fileURL: string; fileType: string }> => {
   return new Promise((resolve, reject) => {
     upload(req, res, (err) => {
       if (err) {
-        return reject(err.message);
+        if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
+          return reject(new ApiError(httpStatus.BAD_REQUEST, 'File too large. Maximum size is 5MB.'));
+        }
+        return reject(new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Unable to upload hero media'));
       }
 
       const relativePath = `/${config.storage.LOCAL_UPLOAD_PATH}${req.file?.filename}`;
       const fileURL = `http://localhost:5000${relativePath}`;
       const mimeType = req.file?.mimetype || '';
       const fileType = mimeType.startsWith('image/') ? 'image' : mimeType.startsWith('video/') ? 'video' : '';
-
-      if (!fileType) {
-        return reject(new Error('Invalid file type. Only images and videos are allowed.'));
-      }
 
       resolve({ fileURL, fileType });
     });

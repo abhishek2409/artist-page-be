@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import mongoose from 'mongoose';
 import toJSON from '../toJSON/toJSON';
 import { IHeroDoc, IHeroModel } from './hero.interfaces';

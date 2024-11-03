@@ -9,7 +9,7 @@ import httpStatus from 'http-status';
 import cookieParser from 'cookie-parser';
 import path from 'path';
 import config from './config/config';
-import { morgan } from './modules/logger';
+import { logger, morgan } from './modules/logger';
 import { jwtStrategy } from './modules/auth';
 import { authLimiter } from './modules/utils';
 import { ApiError, errorConverter, errorHandler } from './modules/errors';
@@ -68,7 +68,8 @@ if (config.env === 'production') {
 app.use('/v1', routes);
 
 // send back a 404 error for any unknown api request
-app.use((_req, _res, next) => {
+app.use((req, _res, next) => {
+  logger.info(`${req.method} ${req.url}`);
   next(new ApiError(httpStatus.NOT_FOUND, 'Not found'));
 });
 
