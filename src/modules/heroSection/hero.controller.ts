@@ -13,7 +13,7 @@ export const createHero = catchAsync(async (req: Request, res: Response) => {
     const { fileType, fileURL } = await uploadMedia(req, res);
     const userId = new mongoose.Types.ObjectId(req.user._id);
     const heroSection = await heroService.createHero({ ...req.body, mediaURL: fileURL, mediaType: fileType, userId });
-    res.status(httpStatus.CREATED).send({ heroSection });
+    res.status(httpStatus.CREATED).send({ hero: heroSection });
   } catch (error: any) {
     console.log({ error });
     throw new ApiError(error.statusCode || httpStatus.INTERNAL_SERVER_ERROR, error.message || 'Unable to create hero');
@@ -21,10 +21,15 @@ export const createHero = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const updateHero = catchAsync(async (req: Request, res: Response) => {
-  const { fileType, fileURL } = await uploadMedia(req, res);
   const heroId = new mongoose.Types.ObjectId(req.params['heroId']);
-  const heroSection = await heroService.updateHero(heroId, { ...req.body, mediaURL: fileURL, mediaType: fileType });
-  res.send({ heroSection });
+  const { fileType, fileURL } = await uploadMedia(req, res);
+  let heroSection;
+  if (!fileType) {
+    heroSection = await heroService.updateHero(heroId, { ...req.body });
+  } else {
+    heroSection = await heroService.updateHero(heroId, { ...req.body, mediaURL: fileURL, mediaType: fileType });
+  }
+  res.send({ hero: heroSection });
 });
 
 export const getAllHeros = catchAsync(async (req: Request, res: Response) => {
