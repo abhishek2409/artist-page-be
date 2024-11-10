@@ -36,10 +36,6 @@ const heroSchema = new mongoose.Schema<IHeroDoc, IHeroModel>(
         type: String,
         required: true,
       },
-      target: {
-        type: String,
-        required: true,
-      },
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,

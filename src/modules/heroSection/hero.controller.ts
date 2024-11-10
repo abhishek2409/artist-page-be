@@ -11,6 +11,10 @@ import * as heroService from './hero.service';
 export const createHero = catchAsync(async (req: Request, res: Response) => {
   try {
     const { fileType, fileURL } = await uploadMedia(req, res);
+    if (!fileType || !fileURL) throw new ApiError(httpStatus.BAD_REQUEST, 'Please upload a hero media');
+    if (!req.body.title) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Please enter a title');
+    }
     const userId = new mongoose.Types.ObjectId(req.user._id);
     const heroSection = await heroService.createHero({ ...req.body, mediaURL: fileURL, mediaType: fileType, userId });
     res.status(httpStatus.CREATED).send({ hero: heroSection });

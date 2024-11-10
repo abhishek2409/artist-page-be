@@ -12,24 +12,42 @@ export const createHero = async ({
   mediaURL,
   mediaType,
   mediaAlt,
-  cta,
+  ctaTitle,
+  ctaUrl,
   userId,
-}: IHero): Promise<IHeroDoc> => {
+}: IHero & { ctaTitle: string; ctaUrl: string }): Promise<IHeroDoc> => {
   const heroData = {
     title,
     description,
     mediaURL,
     mediaType,
     mediaAlt,
-    cta,
+    cta: {
+      title: ctaTitle,
+      url: ctaUrl,
+    },
     userId,
   };
 
   return HeroSection.create(heroData);
 };
 
-export const updateHero = async (heroId: mongoose.Types.ObjectId, data: IHero): Promise<IHeroDoc> => {
-  const hero = await HeroSection.findByIdAndUpdate(heroId, data, { new: true });
+export const updateHero = async (
+  heroId: mongoose.Types.ObjectId,
+  data: IHero & { ctaTitle: string; ctaUrl: string }
+): Promise<IHeroDoc> => {
+  const payload = {
+    title: data.title,
+    description: data.description,
+    mediaURL: data.mediaURL,
+    mediaType: data.mediaType,
+    mediaAlt: data.mediaAlt,
+    cta: {
+      title: data.ctaTitle,
+      url: data.ctaUrl,
+    },
+  };
+  const hero = await HeroSection.findByIdAndUpdate(heroId, payload, { new: true });
   if (!hero) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Hero not found');
   }
@@ -37,7 +55,7 @@ export const updateHero = async (heroId: mongoose.Types.ObjectId, data: IHero): 
 };
 
 export const getAllHeros = async (userId: IUserDoc['_id']): Promise<Array<IHeroDoc>> => {
-  return HeroSection.find({ userId }).sort({ createdAt: -1 });
+  return HeroSection.find({ userId }).sort({ createdAt: -1 }).select('-userId');
 };
 
 export const getOneHero = async (id: mongoose.Types.ObjectId, userId: IUserDoc['_id']): Promise<IHeroDoc | null> => {
@@ -53,5 +71,5 @@ export const deleteOneHero = async (id: mongoose.Types.ObjectId, userId: IUserDo
   if (!hero) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Failed to delete hero');
   }
-  return HeroSection.find({ userId }).sort({ createdAt: -1 });
+  return HeroSection.find({ userId }).sort({ createdAt: -1 }).select('-userId');
 };
