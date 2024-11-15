@@ -25,6 +25,10 @@ const envVarsSchema = Joi.object()
     CLOUDINARY_CLOUD_NAME: Joi.string().required().description('Cloudinary cloud name'),
     CLOUDINARY_API_KEY: Joi.string().required().description('Cloudinary api key'),
     CLOUDINARY_API_SECRET: Joi.string().required().description('Cloudinary api secret'),
+    GOOGLE_CLIENT_ID: Joi.string().required().description('Google client id'),
+    GOOGLE_CLIENT_SECRET: Joi.string().required().description('Google Client Secret'),
+    GOOGLE_CALLBACK_URI: Joi.string().required().description('Google callback uri'),
+    SESSION_SECRET: Joi.string().required().description('Session secret'),
   })
   .unknown();
 
@@ -68,6 +72,14 @@ const config = {
     CLOUDINARY_CLOUD_NAME: envVars.CLOUDINARY_CLOUD_NAME,
     CLOUDINARY_API_KEY: envVars.CLOUDINARY_API_KEY,
     CLOUDINARY_API_SECRET: envVars.CLOUDINARY_API_SECRET,
+  },
+  google: {
+    GOOGLE_CLIENT_ID: envVars.GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET: envVars.GOOGLE_CLIENT_SECRET,
+    GOOGLE_CALLBACK_URI: envVars.GOOGLE_CALLBACK_URI,
+  },
+  session: {
+    SECRET: envVars.SESSION_SECRET,
   },
 };
 

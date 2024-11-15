@@ -4,10 +4,12 @@ import httpStatus from 'http-status';
 import ApiError from '../errors/ApiError';
 import { roleRights } from '../../config/roles';
 import { IUserDoc } from '../user/user.interfaces';
+import { logger } from '../logger';
 
 const verifyCallback =
   (req: Request, resolve: any, reject: any, requiredRights: string[]) =>
   async (err: Error, user: IUserDoc, info: string) => {
+    logger.info('err:', err, 'user:', user, 'info:', info);
     if (err || info || !user) {
       return reject(new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate'));
     }

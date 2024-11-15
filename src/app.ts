@@ -4,16 +4,16 @@ import xss from 'xss-clean';
 import ExpressMongoSanitize from 'express-mongo-sanitize';
 import compression from 'compression';
 import cors from 'cors';
-import passport from 'passport';
 import httpStatus from 'http-status';
 import cookieParser from 'cookie-parser';
 import path from 'path';
+import session from 'express-session';
 import config from './config/config';
 import { logger, morgan } from './modules/logger';
-import { jwtStrategy } from './modules/auth';
 import { authLimiter } from './modules/utils';
 import { ApiError, errorConverter, errorHandler } from './modules/errors';
 import routes from './routes/v1';
+import { passport } from './modules/auth';
 
 const app: Express = express();
 // Define the path to the upload directory
@@ -40,6 +40,16 @@ app.use(
     credentials: true,
   })
 );
+
+// Session Middleware for storing state parameter
+app.use(
+  session({
+    secret: config.session.SECRET, // Use a strong secret in production
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: config.env === 'production' }, // Set to true if using HTTPS
+  })
+);
 app.options('*', cors());
 
 // parse json request body
@@ -57,7 +67,7 @@ app.use(compression());
 
 // jwt authentication
 app.use(passport.initialize());
-passport.use('jwt', jwtStrategy);
+app.use(passport.session());
 
 // limit repeated failed requests to auth endpoints
 if (config.env === 'production') {

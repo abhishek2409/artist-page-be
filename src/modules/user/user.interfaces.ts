@@ -2,12 +2,19 @@ import mongoose, { Model, Document } from 'mongoose';
 import { QueryResult } from '../paginate/paginate';
 import { AccessAndRefreshTokens } from '../token/token.interfaces';
 
+export enum Provider {
+  GOOGLE = 'google',
+  MANUAL = 'manual',
+}
+
 export interface IUser {
   name: string;
   email: string;
   password: string;
   role: string;
-  isEmailVerified: boolean;
+  isEmailVerified?: boolean;
+  provider: Provider;
+  googleId?: string;
 }
 
 export interface IUserDoc extends IUser, Document {
@@ -21,7 +28,7 @@ export interface IUserModel extends Model<IUserDoc> {
 
 export type UpdateUserBody = Partial<IUser>;
 
-export type NewRegisteredUser = Omit<IUser, 'role' | 'isEmailVerified' | 'name'>;
+export type NewRegisteredUser = Omit<IUser, 'role' | 'isEmailVerified' | 'name' | 'provider' | 'googleId'>;
 
 export type NewCreatedUser = Omit<IUser, 'isEmailVerified'>;
 

@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 import toJSON from '../toJSON/toJSON';
 import paginate from '../paginate/paginate';
 import { roles } from '../../config/roles';
-import { IUserDoc, IUserModel } from './user.interfaces';
+import { IUserDoc, IUserModel, Provider } from './user.interfaces';
 
 const userSchema = new mongoose.Schema<IUserDoc, IUserModel>(
   {
@@ -25,18 +25,7 @@ const userSchema = new mongoose.Schema<IUserDoc, IUserModel>(
         }
       },
     },
-    password: {
-      type: String,
-      required: true,
-      trim: true,
-      minlength: 8,
-      validate(value: string) {
-        if (!value.match(/\d/) || !value.match(/[a-zA-Z]/)) {
-          throw new Error('Password must contain at least one letter and one number');
-        }
-      },
-      private: true, // used by the toJSON plugin
-    },
+
     role: {
       type: String,
       enum: roles,
@@ -45,6 +34,33 @@ const userSchema = new mongoose.Schema<IUserDoc, IUserModel>(
     isEmailVerified: {
       type: Boolean,
       default: false,
+    },
+    provider: {
+      type: String,
+      enum: Provider,
+      required: true,
+      default: Provider.MANUAL,
+    },
+    googleId: {
+      type: String,
+      required: false,
+      unique: true,
+      sparse: true,
+    },
+    password: {
+      type: String,
+      required(this: IUserDoc) {
+        // eslint-disable-next-line @typescript-eslint/dot-notation
+        return this['provider'] === Provider.MANUAL;
+      },
+      trim: true,
+      minlength: 8,
+      validate(value: string) {
+        if (!value.match(/\d/) || !value.match(/[a-zA-Z]/)) {
+          throw new Error('Password must contain at least one letter and one number');
+        }
+      },
+      private: true, // used by the toJSON plugin
     },
   },
   {
@@ -84,6 +100,8 @@ userSchema.pre('save', async function (next) {
   }
   next();
 });
+
+userSchema.index({ email: 1, provider: 1 }, { unique: true });
 
 const User = mongoose.model<IUserDoc, IUserModel>('User', userSchema);
 

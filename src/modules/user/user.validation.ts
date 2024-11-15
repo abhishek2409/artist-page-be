@@ -1,17 +1,5 @@
 import Joi from 'joi';
 import { password, objectId } from '../validate/custom.validation';
-import { NewCreatedUser } from './user.interfaces';
-
-const createUserBody: Record<keyof NewCreatedUser, any> = {
-  email: Joi.string().required().email(),
-  password: Joi.string().required().custom(password),
-  name: Joi.string().required(),
-  role: Joi.string().required().valid('user', 'admin'),
-};
-
-export const createUser = {
-  body: Joi.object().keys(createUserBody),
-};
 
 export const getUsers = {
   query: Joi.object().keys({

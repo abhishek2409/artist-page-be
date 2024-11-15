@@ -86,7 +86,7 @@ export const verifyToken = async (token: string, type: string): Promise<ITokenDo
  * @param {IUserDoc} user
  * @returns {Promise<AccessAndRefreshTokens>}
  */
-export const generateAuthTokens = async (user: IUserDoc): Promise<AccessAndRefreshTokens> => {
+export const generateAuthTokens = async (user: Partial<IUserDoc>): Promise<AccessAndRefreshTokens> => {
   const accessTokenExpires = moment().add(config.jwt.accessExpirationMinutes, 'minutes');
   const accessToken = generateToken(user.id, accessTokenExpires, tokenTypes.ACCESS);
 

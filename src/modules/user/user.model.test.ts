@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { NewCreatedUser } from './user.interfaces';
+import { NewCreatedUser, Provider } from './user.interfaces';
 import User from './user.model';
 
 describe('User model', () => {
@@ -11,6 +11,7 @@ describe('User model', () => {
         email: faker.internet.email().toLowerCase(),
         password: 'password1',
         role: 'user',
+        provider: Provider.MANUAL,
       };
     });
 

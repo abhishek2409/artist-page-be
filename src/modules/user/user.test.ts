@@ -10,7 +10,7 @@ import * as tokenService from '../token/token.service';
 import app from '../../app';
 import setupTestDB from '../jest/setupTestDB';
 import User from './user.model';
-import { NewCreatedUser } from './user.interfaces';
+import { NewCreatedUser, Provider } from './user.interfaces';
 
 setupTestDB();
 
@@ -63,6 +63,7 @@ describe('User routes', () => {
         email: faker.internet.email().toLowerCase(),
         password: 'password1',
         role: 'user',
+        provider: Provider.MANUAL,
       };
     });
 

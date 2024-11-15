@@ -1,5 +1,6 @@
 import { Model, Document } from 'mongoose';
 import { IUserDoc } from '../user/user.interfaces';
+import { QueryResult } from '../paginate/paginate';
 
 export type MediaType = 'image' | 'video';
 export type HeroCTA = {
@@ -21,4 +22,6 @@ export interface IHero {
 
 export interface IHeroDoc extends IHero, Document {}
 
-export interface IHeroModel extends Model<IHeroDoc> {}
+export interface IHeroModel extends Model<IHeroDoc> {
+  paginate(filter: Record<string, any>, options: Record<string, any>): Promise<QueryResult>;
+}
