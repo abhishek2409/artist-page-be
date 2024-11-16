@@ -2,6 +2,7 @@ import express, { Router } from 'express';
 import authRoute from './auth.route';
 import userRoute from './user.route';
 import heroRoute from './hero.route';
+import instagramRoute from './instagram.route';
 
 const router = express.Router();
 
@@ -22,6 +23,10 @@ const defaultIRoute: IRoute[] = [
   {
     path: '/hero',
     route: heroRoute,
+  },
+  {
+    path: '/instagram',
+    route: instagramRoute,
   },
 ];
 

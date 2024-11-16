@@ -15,6 +15,7 @@ export interface IUser {
   isEmailVerified?: boolean;
   provider: Provider;
   googleId?: string;
+  isInstagramConnected?: boolean;
 }
 
 export interface IUserDoc extends IUser, Document {
@@ -28,7 +29,10 @@ export interface IUserModel extends Model<IUserDoc> {
 
 export type UpdateUserBody = Partial<IUser>;
 
-export type NewRegisteredUser = Omit<IUser, 'role' | 'isEmailVerified' | 'name' | 'provider' | 'googleId'>;
+export type NewRegisteredUser = Omit<
+  IUser,
+  'role' | 'isEmailVerified' | 'name' | 'provider' | 'googleId' | 'isInstagramConnected'
+>;
 
 export type NewCreatedUser = Omit<IUser, 'isEmailVerified'>;
 

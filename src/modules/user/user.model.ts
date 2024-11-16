@@ -35,6 +35,10 @@ const userSchema = new mongoose.Schema<IUserDoc, IUserModel>(
       type: Boolean,
       default: false,
     },
+    isInstagramConnected: {
+      type: Boolean,
+      default: false,
+    },
     provider: {
       type: String,
       enum: Provider,

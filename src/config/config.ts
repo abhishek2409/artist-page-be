@@ -29,6 +29,11 @@ const envVarsSchema = Joi.object()
     GOOGLE_CLIENT_SECRET: Joi.string().required().description('Google Client Secret'),
     GOOGLE_CALLBACK_URI: Joi.string().required().description('Google callback uri'),
     SESSION_SECRET: Joi.string().required().description('Session secret'),
+    INSTAGRAM_APP_ID: Joi.string().required().description('Instagram client id'),
+    INSTAGRAM_APP_SECRET: Joi.string().required().description('Instagram client secret'),
+    INSTAGRAM_REDIRECT_URI: Joi.string().required().description('Instagram redirect uri'),
+    INSTGRAM_GRAPH_URL: Joi.string().required().description('Instagram graph url'),
+    BACKEND_URL: Joi.string().required().description('Backend url'),
   })
   .unknown();
 
@@ -41,6 +46,7 @@ if (error) {
 const config = {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
+  backendURL: envVars.BACKEND_URL,
   mongoose: {
     url: envVars.MONGODB_URL + (envVars.NODE_ENV === 'test' ? '-test' : ''),
     options: {
@@ -80,6 +86,12 @@ const config = {
   },
   session: {
     SECRET: envVars.SESSION_SECRET,
+  },
+  instagram: {
+    INSTAGRAM_APP_ID: envVars.INSTAGRAM_APP_ID,
+    INSTAGRAM_APP_SECRET: envVars.INSTAGRAM_APP_SECRET,
+    INSTAGRAM_REDIRECT_URI: envVars.INSTAGRAM_REDIRECT_URI,
+    INSTGRAM_GRAPH_URL: envVars.INSTGRAM_GRAPH_URL,
   },
 };
 

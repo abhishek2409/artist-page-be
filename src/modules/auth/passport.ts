@@ -15,11 +15,29 @@ interface OAuthState {
   flow: 'login' | 'signup';
 }
 
+// Custom extractor to get token from cookie
+const cookieExtractor = (req: any): string | null => {
+  let token = null;
+  if (req && req.cookies) {
+    // eslint-disable-next-line @typescript-eslint/dot-notation
+    token = req.cookies['artist_page_token_access'];
+  }
+  return token;
+};
+
+// Combine multiple extractors
+const jwtExtractor = (req: any) => {
+  return (
+    ExtractJwt.fromAuthHeaderAsBearerToken()(req) || // Extract from Authorization header
+    cookieExtractor(req) // Extract from cookie
+  );
+};
+
 passport.use(
   new JwtStrategy(
     {
       secretOrKey: config.jwt.secret,
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: jwtExtractor,
     },
     async (payload: IPayload, done) => {
       try {

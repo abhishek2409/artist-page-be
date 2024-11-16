@@ -56,7 +56,7 @@ export const uploadMedia = (req: Request, res: Response): Promise<{ fileURL: str
       }
 
       const relativePath = `/${config.storage.LOCAL_UPLOAD_PATH}${req.file?.filename}`;
-      const fileURL = `http://localhost:5000${relativePath}`;
+      const fileURL = `${config.backendURL}${relativePath}`;
       const mimeType = req.file?.mimetype || '';
       const fileType = mimeType.startsWith('image/') ? 'image' : mimeType.startsWith('video/') ? 'video' : '';
 
