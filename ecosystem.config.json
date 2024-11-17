@@ -11,6 +11,20 @@
       "env": {
         "NODE_ENV": "production"
       }
+    },
+    {
+      "name": "backend-worker",
+      "script": "dist/modules/analytics/analytics.worker.js",
+      "watch": false,
+      "instances": 1,
+      "autorestart": true,
+      "max_memory_restart": "1G",
+      "env": {
+        "NODE_ENV": "production"
+      },
+      "env_development": {
+        "NODE_ENV": "development"
+      }
     }
   ]
 }

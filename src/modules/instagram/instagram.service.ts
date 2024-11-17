@@ -2,27 +2,15 @@
 import axios from 'axios';
 import mongoose, { UpdateQuery } from 'mongoose';
 import httpStatus from 'http-status';
-import { IInstagramAccount } from './instagram.interfaces';
+import { IInstagramAccount, InstagramMedia } from './instagram.interfaces';
 import InstagramAccount from './instagram.model';
 import config from '../../config/config';
 import { logger } from '../logger';
 import { userService } from '../user';
 import { isCreatedAtPlus60DaysLessThanOneDayFromToday } from '../utils/date';
 import { ApiError } from '../errors';
+import { UserInsights } from '../analytics/analytics.interfaces';
 
-export interface InstagramMedia {
-  id: string;
-  caption: string;
-  media_type: 'CAROUSEL_ALBUM' | 'IMAGE' | 'VIDEO';
-  media_url: string;
-  permalink: string;
-  thumbnail_url?: string;
-  timestamp: string;
-  username: string;
-  comments_count: number;
-  like_count: number;
-  media_product_type: 'AD' | 'STORY' | 'REELS';
-}
 export const refreshAccessToken = async (userId: mongoose.Types.ObjectId): Promise<void> => {
   const account: IInstagramAccount | null = await InstagramAccount.findOne({ userId });
 
@@ -96,4 +84,103 @@ export const fetchInstagramMedia = async (userId: mongoose.Types.ObjectId, media
   });
   logger.info('Media Object', mediaObject.data);
   return mediaObject.data;
+};
+
+export const fetchUserInsights = async (userId: mongoose.Types.ObjectId): Promise<UserInsights> => {
+  const account: IInstagramAccount | null = await InstagramAccount.findOne({ userId });
+
+  if (!account) {
+    throw new Error('Instagram account not connected.');
+  }
+
+  try {
+    const insightsResponse = await axios.get(`${config.instagram.INSTGRAM_GRAPH_URL}/${account.instagramUserId}/insights`, {
+      params: {
+        access_token: account.accessToken,
+        metrics:
+          'impressions,reach,total_interactions,accounts_engaged,likes,comments,saved,shares,replies,profile_views,website_clicks,profile_links_taps,follows_and_unfollows,engaged_audience_demographics,reached_audience_demographics,follower_demographics',
+      },
+    });
+    logger.info('Insights Response', insightsResponse.data);
+    const { data } = insightsResponse.data;
+    const userInsights: UserInsights = {
+      impressions: 0,
+      reach: 0,
+      totalInteractions: 0,
+      accountsEngaged: 0,
+      likes: 0,
+      comments: 0,
+      saved: 0,
+      shares: 0,
+      replies: 0,
+      profileViews: 0,
+      websiteClicks: 0,
+      profileLinksTaps: 0,
+      followsAndUnfollows: 0,
+      engagedAudienceDemographics: 0,
+      reachedAudienceDemographics: 0,
+      followerDemographics: 0,
+      generatedAt: new Date(),
+    };
+    // parse insights data
+    data.forEach((insight: any) => {
+      switch (insight.name) {
+        case 'impressions':
+          userInsights.impressions = insight.values[0].value;
+          break;
+        case 'reach':
+          userInsights.reach = insight.values[0].value;
+          break;
+        case 'total_interactions':
+          userInsights.totalInteractions = insight.values[0].value;
+          break;
+        case 'accounts_engaged':
+          userInsights.accountsEngaged = insight.values[0].value;
+          break;
+        case 'likes':
+          userInsights.likes = insight.values[0].value;
+          break;
+        case 'comments':
+          userInsights.comments = insight.values[0].value;
+          break;
+        case 'saved':
+          userInsights.saved = insight.values[0].value;
+          break;
+        case 'shares':
+          userInsights.shares = insight.values[0].value;
+          break;
+        case 'replies':
+          userInsights.replies = insight.values[0].value;
+          break;
+        case 'profile_views':
+          userInsights.profileViews = insight.values[0].value;
+          break;
+        case 'website_clicks':
+          userInsights.websiteClicks = insight.values[0].value;
+          break;
+        case 'profile_links_taps':
+          userInsights.profileLinksTaps = insight.values[0].value;
+          break;
+        case 'follows_and_unfollows':
+          userInsights.followsAndUnfollows = insight.values[0].value;
+          break;
+        case 'engaged_audience_demographics':
+          userInsights.engagedAudienceDemographics = insight.values[0].value;
+          break;
+        case 'reached_audience_demographics':
+          userInsights.reachedAudienceDemographics = insight.values[0].value;
+          break;
+        case 'follower_demographics':
+          userInsights.followerDemographics = insight.values[0].value;
+          break;
+        default:
+          break;
+      }
+    });
+
+    return userInsights;
+  } catch (error) {
+    logger.error('Error fetching Instagram insights:', error);
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Inetrnal server error, please refresh page');
+  }
 };

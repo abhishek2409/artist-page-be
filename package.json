@@ -4,11 +4,11 @@
   "description": "Node express mongoose typescript boilerplate",
   "main": "dist/index.js",
   "bin": "bin/createNodetsApp.cjs",
-  "repository": "https://github.com/saisilinus/node-express-mongoose-typescript-boilerplate.git",
+  "repository": "",
   "bugs": {
     "url": "https://github.com/saisilinus/node-express-mongoose-typescript-boilerplate/issues"
   },
-  "author": "linus wafula saisi <saisilinus.work@gmail.com>",
+  "author": "Abhishek Wadhawan <abhishek.wadhawan@ymail.com>",
   "license": "MIT",
   "type": "module",
   "engines": {
@@ -21,6 +21,7 @@
     "compile:watch": "tsc --build --watch",
     "pre:dev": "cross-env NODE_ENV=development nodemon --experimental-modules --es-module-specifier-resolution=node --inspect dist/index.js",
     "dev": "concurrently --kill-others \"yarn compile:watch\" \"yarn pre:dev\"",
+    "worker": "ts-node-dev src/modules/analytics/analytics.worker.ts",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -i --colors --verbose --detectOpenHandles",
     "test:ts": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -i --colors --verbose --detectOpenHandles -- 'ts$'",
     "test:js": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -i --colors --verbose --detectOpenHandles -- 'js$'",
@@ -107,6 +108,7 @@
     "standard-version": "^9.3.2",
     "supertest": "^6.1.6",
     "ts-jest": "^27.1.3",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^4.5.4"
   },
   "dependencies": {
@@ -114,6 +116,9 @@
     "aws-sdk": "^2.1691.0",
     "axios": "^1.7.7",
     "bcryptjs": "^2.4.3",
+    "bull": "^4.16.4",
+    "bull-board": "^2.1.3",
+    "bullmq": "^5.26.2",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -137,6 +142,7 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.0",
     "pm2": "^5.1.2",
+    "socket.io": "^4.8.1",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.2.0",
     "uuid": "^11.0.2",

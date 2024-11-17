@@ -1,5 +1,6 @@
 import catchAsync from './catchAsync';
 import pick from './pick';
-import authLimiter from './rateLimiter';
+import rateLimiter from './rateLimiter';
+import delay from './delay';
 
-export { catchAsync, pick, authLimiter };
+export { catchAsync, pick, rateLimiter, delay };

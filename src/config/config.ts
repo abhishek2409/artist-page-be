@@ -34,6 +34,9 @@ const envVarsSchema = Joi.object()
     INSTAGRAM_REDIRECT_URI: Joi.string().required().description('Instagram redirect uri'),
     INSTGRAM_GRAPH_URL: Joi.string().required().description('Instagram graph url'),
     BACKEND_URL: Joi.string().required().description('Backend url'),
+    REDIS_HOST: Joi.string().required().description('Redis host'),
+    REDIS_PORT: Joi.string().required().description('Redis port'),
+    REDIS_PASSWORD: Joi.string().required().description('Redis password'),
   })
   .unknown();
 
@@ -92,6 +95,11 @@ const config = {
     INSTAGRAM_APP_SECRET: envVars.INSTAGRAM_APP_SECRET,
     INSTAGRAM_REDIRECT_URI: envVars.INSTAGRAM_REDIRECT_URI,
     INSTGRAM_GRAPH_URL: envVars.INSTGRAM_GRAPH_URL,
+  },
+  redis: {
+    host: envVars.REDIS_HOST,
+    port: envVars.REDIS_PORT,
+    password: envVars.REDIS_PASSWORD,
   },
 };
 

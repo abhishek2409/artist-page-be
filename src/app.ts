@@ -8,14 +8,27 @@ import httpStatus from 'http-status';
 import cookieParser from 'cookie-parser';
 import path from 'path';
 import session from 'express-session';
+import https from 'https';
+import fs from 'fs';
 import config from './config/config';
 import { logger, morgan } from './modules/logger';
-import { authLimiter } from './modules/utils';
 import { ApiError, errorConverter, errorHandler } from './modules/errors';
 import routes from './routes/v1';
 import { passport } from './modules/auth';
+import { rateLimiter } from './modules/utils';
 
 const app: Express = express();
+
+export const server = https.createServer(
+  {
+    key: fs.readFileSync(path.resolve('./server.key')),
+    cert: fs.readFileSync(path.resolve('./server.crt')),
+  },
+  app
+);
+
+// ioServer.use(authenticateSocket);
+
 // Define the path to the upload directory
 const uploadDirectory = path.resolve(config.storage.LOCAL_UPLOAD_PATH);
 
@@ -71,7 +84,14 @@ app.use(passport.session());
 
 // limit repeated failed requests to auth endpoints
 if (config.env === 'production') {
-  app.use('/v1/auth', authLimiter);
+  app.use(
+    '/v1/auth',
+    rateLimiter({
+      windowMs: 60 * 60 * 1000,
+      max: 5,
+      message: 'Too many attempts from this IP, please try again after an hour.',
+    })
+  );
 }
 
 // v1 api routes

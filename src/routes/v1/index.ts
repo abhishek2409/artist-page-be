@@ -3,6 +3,7 @@ import authRoute from './auth.route';
 import userRoute from './user.route';
 import heroRoute from './hero.route';
 import instagramRoute from './instagram.route';
+import analyticsRoute from './analytics.route';
 
 const router = express.Router();
 
@@ -27,6 +28,10 @@ const defaultIRoute: IRoute[] = [
   {
     path: '/instagram',
     route: instagramRoute,
+  },
+  {
+    path: '/analytics',
+    route: analyticsRoute,
   },
 ];
 

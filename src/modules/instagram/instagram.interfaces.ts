@@ -9,3 +9,17 @@ export interface IInstagramAccount extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface InstagramMedia {
+  id: string;
+  caption: string;
+  media_type: 'CAROUSEL_ALBUM' | 'IMAGE' | 'VIDEO';
+  media_url: string;
+  permalink: string;
+  thumbnail_url?: string;
+  timestamp: string;
+  username: string;
+  comments_count: number;
+  like_count: number;
+  media_product_type: 'AD' | 'STORY' | 'REELS';
+}
